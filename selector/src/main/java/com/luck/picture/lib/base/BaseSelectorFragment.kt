@@ -271,7 +271,16 @@ abstract class BaseSelectorFragment : Fragment() {
                 // Pop the top state off the back stack. This function is asynchronous
                 // it enqueues the request to pop, but the action will not be performed
                 // until the application returns to its event loop.
-                requireActivity().supportFragmentManager.popBackStack()
+                requireActivity().supportFragmentManager.popBackStackImmediate().let {
+                    if (it) {
+                        requireActivity().supportFragmentManager.fragments.lastOrNull()
+                            ?.let { fragment ->
+                                if (fragment is BaseSelectorFragment) {
+                                    setFragmentKeyBackListener()
+                                }
+                            }
+                    }
+                }
             }
         }
     }
